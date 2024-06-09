@@ -1,0 +1,65 @@
+{
+  "name": "myapp",
+  "version": "1.0.0",
+  "main": "main.js",
+  "description": "description test",
+  "author": "reza3vi",
+  "license": "ISC",
+  "build": {
+    "appId": "com.www.myapp",
+    "productName": "myapp",
+    "publish": [
+      {
+        "provider": "github",
+        "releaseType": "release",
+        "owner": "reza3vi",
+        "repo": "myapp"
+      }
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "directories": {
+      "output": "setup"
+    }
+  },
+  "scripts": {
+    "ng": "ng",
+    "start": "electron .",
+    "watch": "nodemon --exec electron .",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder",
+    "app:publish": "electron-builder --win -p always"
+  },
+  "dependencies": {
+    "@angular/animations": "^17.0.0",
+    "@angular/common": "^17.0.0",
+    "@angular/compiler": "^17.0.0",
+    "@angular/core": "^17.0.0",
+    "@angular/forms": "^17.0.0",
+    "@angular/platform-browser": "^17.0.0",
+    "@angular/platform-browser-dynamic": "^17.0.0",
+    "@angular/router": "^17.0.0",
+    "electron-log": "^5.1.5",
+    "electron-updater": "^6.1.8",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.2"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.0.8",
+    "@angular/cli": "^17.0.8",
+    "@angular/compiler-cli": "^17.0.0",
+    "@types/jasmine": "~5.1.0",
+    "electron": "^30.0.8",
+    "electron-builder": "^24.13.3",
+    "jasmine-core": "~5.1.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "nodemon": "^3.1.2",
+    "typescript": "~5.2.2"
+  }
+}
