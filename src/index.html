@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>My App 2</title>
+
+    <base href="./" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  </head>
+
+  <body>
+    <p id="message">message...</p>
+    <p id="chrome-version">chrome...</p>
+    <p id="node-version">node...</p>
+    <p id="electron-version">electron...</p>
+    <app-root></app-root>
+
+    <script defer>
+      // setTimeout(() => {
+      //   bridge.checkForUpdate();
+      // }, 3 * 1000);
+
+      // document.addEventListener("DOMContentLoaded", function () {
+      //   // window.bridge.updateMessage("www");
+      // });
+
+      // function updateMessage(event, message) {
+      //   console.log("event, message: ", event, message);
+      //   console.log("message logged in view");
+      //   let elemE = document.getElementById("message");
+      //   console.log("elemE: ", elemE);
+      //   elemE.innerHTML = message;
+      // }
+    </script>
+  </body>
+</html>
