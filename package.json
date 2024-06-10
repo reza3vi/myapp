@@ -27,6 +27,7 @@
     "ng": "ng",
     "start": "electron .",
     "watch": "nodemon --exec electron .",
+    "package": "electron-builder -p always",
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder",
     "app:publish": "electron-builder --win -p always"
