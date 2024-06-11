@@ -8,6 +8,7 @@
   "build": {
     "appId": "com.www.myapp",
     "productName": "myapp",
+    "icon": "app/icon.png",
     "publish": [
       {
         "provider": "github",
@@ -21,16 +22,28 @@
     },
     "directories": {
       "output": "setup"
-    }
+    },
+    "files": [
+      "**/*",
+      "!**/*.ts",
+      "!*.map",
+      "!package.json",
+      "!package-lock.json",
+      {
+        "from": "../dist",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
   },
   "scripts": {
     "ng": "ng",
     "start": "electron .",
     "watch": "nodemon --exec electron .",
-    "package": "electron-builder -p always",
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder",
-    "app:publish": "electron-builder --win -p always"
+    "app:publish": "electron-builder -p always"
   },
   "dependencies": {
     "@angular/animations": "^17.0.0",

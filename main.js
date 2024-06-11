@@ -1,172 +1,60 @@
-const { app, BrowserWindow } = require("electron/main");
-const { ipcMain, dialog } = require("electron");
-const { autoUpdater } = require("electron-updater");
-const log = require("electron-log");
+const { app, dialog, ipcMain } = require('electron');
 
-const fs = require("fs");
+const MainWindow = require('./app/main-window');
+const AutoUpdater = require('./app/auto-updater');
+const Notification = require('./app/notification');
+
+const GlobalShortcut = require('./app/global-shortcut');
+
+const fs = require('fs');
 
 const isPackaged = !process.defaultApp;
 
-fs.writeFileSync("run.txt", isPackaged.toString());
+// https://www.electronjs.org/docs/latest/api/clipboard
 
-const path = require("node:path");
+fs.writeFileSync('run.txt', isPackaged.toString());
 
-ipcMain.on("click", ($event, data) => $event.reply("click", data));
+// const path = require("node:path");
 
-autoUpdater.logger = log;
-log.info("App starting...");
+ipcMain.on('click', ($event, data) => $event.reply('click', data));
 
-function sendStatusToWindow(text) {
-  fs.writeFileSync("logger.log", text);
-  log.info(text);
+let window;
+let autoUpdater;
+let notification;
+let globalShortcut;
 
-  // win.webContents.send("message", text);
-}
-
-let win;
 function createWindow() {
-  win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    removeMenu: true,
-    acceptFirstMouse: true,
-    autoHideMenuBar: true,
-    webPreferences: {
-      contextIsolation: true,
-      preload: path.join(__dirname, "preload.js"),
-    },
-  });
+	window = new MainWindow();
+	autoUpdater = new AutoUpdater(window);
+	notification = new Notification();
+	globalShortcut = new GlobalShortcut();
 
-  win.loadFile("dist/myapp/browser/index.html");
-
-  win.webContents.openDevTools();
+	// window.openDevTools();
 }
 
 app.whenReady().then(async () => {
-  log.transports.file.level = "debug";
-  autoUpdater.logger = log;
-  autoUpdater.checkForUpdatesAndNotify();
+	createWindow();
 
-  createWindow();
+	// globalShortcut.Register();
 
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
+	autoUpdater.checkForUpdates().then();
 
-  app.on("ready", function () {
-    autoUpdater.updateConfigPath = path.join(__dirname, "app-update.yml");
+	// notification.show('hi', 'خوش آمدید'); // .then((x) => notification.show('hi', '3333333333333333333333'));
 
-    autoUpdater.checkForUpdatesAndNotify();
-  });
+	// let code = `
+	// var p = document.getElementById("message");
+	// p.innerHTML = "I am the changed text. ";
+	// `;
 
-  // process.env.GH_TOKEN = "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";
-
-  // win.webContents.send(
-  //   "updateMessage",
-  //   `Checking for updates. Current version ${app.getVersion()}`
-  // );
-
-  // win.once("ready-to-show", () => {
-  // autoUpdater.setFeedURL({
-  //   provider: "github",
-  //   url: "https://github.com/reza3vi/myapp",
-  //   channel: "latest",
-  // });
-  // autoUpdater.checkForUpdatesAndNotify().then((res) => {
-  //   fs.writeFileSync("res.txt", JSON.stringify(res));
-  // });
-  // });
-
-  // autoUpdater.checkForUpdates();
-
-  // dialogger.showMessageBox(
-  //   {
-  //     type: "info",
-  //     buttons: ["Restart", "Update"],
-  //     title: `${"appName"} Update`,
-  //     detail: `A new version has been downloaded. Restart ${"appName"} to apply the updates.`,
-  //   },
-  //   (res) => {
-  //     console.log("res: ", res);
-  //     console.log("message: ", message);
-  //   }
-  // );
-
-  // let code = `
-  // var p = document.getElementById("message");
-  // p.innerHTML = "I am the changed text. ";
-  // `;
-
-  // win.webContents.executeJavaScript(code);
+	// win.webContents.executeJavaScript(code);
 });
 
-autoUpdater.on("checking-for-update", () => {
-  sendStatusToWindow("Checking for update...");
+app.on('window-all-closed', () => {
+	if (process.platform !== 'darwin') {
+		app.quit();
+	}
 });
-autoUpdater.on("update-available", (info) => {
-  sendStatusToWindow("Update available.");
 
-  dialog.showMessageBox(
-    {
-      type: "info",
-      buttons: ["بروز رسانی"],
-      title: `بروز رسانی برنامه`,
-      detail: `بروز رسانی را دانلود کنید`,
-    },
-    (res) => {
-      autoUpdater.downloadUpdate();
-      sendStatusToWindow("Update available. ver: " + autoUpdater.currentVersion);
-
-      console.log("res: ", res);
-      console.log("message: ", message);
-    }
-  );
-});
-autoUpdater.on("update-not-available", (info) => {
-  sendStatusToWindow("Update not available.");
-});
-autoUpdater.on("error", (err) => {
-  sendStatusToWindow("Error in auto-updater. " + err);
-});
-autoUpdater.on("download-progress", (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = log_message + " - Downloaded " + progressObj.percent + "%";
-  log_message =
-    log_message +
-    " (" +
-    progressObj.transferred +
-    "/" +
-    progressObj.total +
-    ")";
-  sendStatusToWindow(log_message);
-});
-autoUpdater.on("update-downloaded", (info) => {
-  sendStatusToWindow("Update downloaded");
-});
-// autoUpdater.on("update-available", (info) => {
-//   fs.writeFileSync("update-available.txt", info);
-
-//   dialogger.showMessageBox(
-//     {
-//       type: "info",
-//       buttons: ["Restart", "Update"],
-//       title: `${"appName"} Update`,
-//       detail: JSON.stringify(info),
-//     },
-//     (res) => {
-//       console.log("res: ", res);
-//       console.log("message: ", message);
-//     }
-//   );
-
-//   const path = autoUpdater.downloadUpdate();
-//   console.log("path: ", path);
+// app.on('will-quit', () => {
+// 	globalShortcut.Unregister();
 // });
-
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
